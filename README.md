@@ -4,6 +4,12 @@ Design by Mas Fikri
 
 ## Getting Started
 
+### Pull The Project
+
+```shell
+$ git pull https://github.com/DhiasNaufal/roof-auto
+```
+
 ### Prerequisites
 
 This project uses venv to install the requirement <br/>
