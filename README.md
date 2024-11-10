@@ -46,9 +46,11 @@ $ source venv/bin/activate
 
 ### Installation
 
+Go to Root Folder and
 Install all requirements in venv
 
 ```shell
+(venv) $ cd roof-auto
 (venv) $ pip install -r requirements.txt
 ```
 
@@ -56,6 +58,8 @@ Install all requirements in venv
 
 ### Run Local
 
+On root folder (roof-auto)
+
 ```shell
-(venv) $ python main.py
+(venv) $ python src/main.py
 ```
