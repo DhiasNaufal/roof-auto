@@ -4,10 +4,10 @@ Design by Mas Fikri
 
 ## Getting Started
 
-### Pull The Project
+### Clone The Project
 
 ```shell
-$ git pull https://github.com/DhiasNaufal/roof-auto
+$ git clone https://github.com/DhiasNaufal/roof-auto
 ```
 
 ### Prerequisites
