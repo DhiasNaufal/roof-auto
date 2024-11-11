@@ -1,3 +1,5 @@
+# process_raster.py
+
 import rasterio
 import numpy as np
 from rasterio.features import shapes
@@ -45,7 +47,7 @@ def snap_to_intersections(gdf, tol):
                 intersection_points = find_intersection_points(geom1, geom2)
                 for pt in intersection_points:
                     geom1 = snap(geom1, pt, tol)
-                    geom2 = snap(geom2, pt, tol)
+                    geom2 = snap(geom2, pt, tol)    
             bar.update(i + 1)  # Update progress bar
     return geometries
 
@@ -55,6 +57,7 @@ def create_midline_between_geoms(geom1, geom2):
         return None
     midline = LineString(overlap.centroid.coords)
     return midline
+
 
 def process_raster(input_aspect, output_shp):
     with rasterio.open(input_aspect) as src:
@@ -86,5 +89,3 @@ def process_raster(input_aspect, output_shp):
         result_gdf = gpd.GeoDataFrame(pd.concat([gdf, midline_gdf], ignore_index=True), crs=gdf.crs)
 
         result_gdf.to_file(output_shp, driver='ESRI Shapefile')
-
-    print("Proses raster selesai dan shapefile telah disimpan!")

@@ -1,5 +1,5 @@
 import geopandas as gpd
-import progressbar
+from tqdm import tqdm
 
 def run_clean(input: str, output: str, thres: float, iter: float):
     """
@@ -43,17 +43,8 @@ def run_clean(input: str, output: str, thres: float, iter: float):
         # Set to keep track of processed features
         processed_features = set()
 
-        # Create an outer progress bar for feature iteration
-        outer_progress = progressbar.ProgressBar(widgets=[
-            ' [', progressbar.Percentage(), '] ',
-            progressbar.Bar(), ' ',
-            progressbar.ETA()
-        ], maxval=len(building_gdf)).start()
-
-        # Iterate over each feature with the outer progress bar
-        for i, geom_a in enumerate(building_gdf.iterrows()):
-            outer_progress.update(i)
-            
+        # Iterate over each feature
+        for i, geom_a in tqdm(building_gdf.iterrows(), total=len(building_gdf), desc="Processing features"):            
             # Skip already processed features
             if i in processed_features:
                 continue
@@ -64,17 +55,8 @@ def run_clean(input: str, output: str, thres: float, iter: float):
             # List to store geometries of intersecting features
             intersecting_geometries = []
 
-            # Create an inner progress bar for intersection checking
-            inner_progress = progressbar.ProgressBar(widgets=[
-                ' [', progressbar.Percentage(), '] ',
-                progressbar.Bar(), ' ',
-                progressbar.ETA()
-            ], maxval=len(possible_matches_index)).start()
-
-            # Add a progress bar for the intersection checking process
-            for j, _ in enumerate(possible_matches_index):
-                inner_progress.update(j)
-                
+            # Check intersection with other features
+            for j in possible_matches_index:
                 if i >= j:
                     continue  # Ensure each pair is processed only once
 
@@ -104,11 +86,6 @@ def run_clean(input: str, output: str, thres: float, iter: float):
                 # If no intersection found, add the original feature
                 merged_features.append({'id': f"{i}_asli", 'geometry': geom_a['geometry']})
             
-            inner_progress.finish()
-
-        # Finish outer progress bar
-        outer_progress.finish()
-
         # Create a GeoDataFrame with the merged features
         merged_features_gdf = gpd.GeoDataFrame(merged_features, crs=building_gdf.crs)
 

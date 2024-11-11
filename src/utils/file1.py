@@ -3,7 +3,6 @@ from rasterio.enums import Resampling
 from rasterio.features import geometry_mask
 import numpy as np
 import geopandas as gpd
-import progressbar
 
 def process_aspect(ohm_path, building_outline_path, output_path):
     # Fungsi untuk menghitung aspect dengan rentang 0 hingga 360
@@ -26,18 +25,14 @@ def process_aspect(ohm_path, building_outline_path, output_path):
     building_outline = gpd.read_file(building_outline_path)
     building_outline = building_outline.to_crs(profile["crs"])
 
-    # Buat mask untuk area outline gedung dengan progress bar
-    with progressbar.ProgressBar(widgets=[' [', progressbar.Percentage(), '] ', progressbar.Bar()], maxval=len(building_outline)) as bar:
-        mask = geometry_mask([geom for geom in building_outline.geometry], 
-                             transform=transform, 
-                             invert=True,
-                             out_shape=aspect_data.shape)
-        bar.update(len(building_outline))  # Update progress bar setelah selesai
+    # Buat mask untuk area outline gedung
+    mask = geometry_mask([geom for geom in building_outline.geometry], 
+                         transform=transform, 
+                         invert=True,
+                         out_shape=aspect_data.shape)
 
     # Terapkan mask untuk memotong hasil aspect
-    with progressbar.ProgressBar(widgets=[' [', progressbar.Percentage(), '] ', progressbar.Bar()], maxval=100) as bar:
-        aspect_clipped = np.where(mask, aspect_data, np.nan)
-        bar.update(100)  # Update progress bar setelah selesai
+    aspect_clipped = np.where(mask, aspect_data, np.nan)
 
     # Simpan hasil clipped aspect sebagai raster baru
     profile.update(dtype=rasterio.float32, count=1, nodata=np.nan)
